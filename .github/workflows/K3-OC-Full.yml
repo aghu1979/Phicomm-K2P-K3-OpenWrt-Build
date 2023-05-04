@@ -21,9 +21,9 @@ on:
   repository_dispatch:
 
   # main分支有提交的时候
-  # push:
-  #   branches: 
-  #     - main
+  push:
+    branches: 
+      - main
   # 每周六0点
   schedule:
     - cron: 0 0 * * 6
