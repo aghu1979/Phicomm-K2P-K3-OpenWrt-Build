@@ -1,0 +1,67 @@
+#!/bin/bash
+
+#
+#Copyright 2021-2023 yangxu52<https://github.com/yangxu52>
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+#
+
+echo '添加Passwall软件源'
+rm -rf package/lean/luci-app-passwall
+sed -i '$a src-git passwall https://github.com/xiaorouji/openwrt-passwall' feeds.conf.default
+git clone -b luci https://github.com/xiaorouji/openwrt-passwall package/lean/luci-app-passwall
+echo '=========Add passwall source OK!========='
+
+echo '添加jerrykuku的argon-mod主题/sirpdboy的kucat主题'
+rm -rf package/lean/luci-theme-argon
+git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/lean/luci-theme-argon
+git clone https://github.com/sirpdboy/luci-theme-kucat package/lean/luci-theme-kucat
+echo '=========Add argon-mod OK!========='
+
+echo '添加第三方软件源'
+rm -rf package/lean/luci-app-netdata
+# rm -rf package/lean/luci-app-nlbwmon
+rm -rf package/lean/luci-app-wrtbwmon
+# 添加kenzok8/small-package
+# echo 'src-git small8 https://github.com/kenzok8/small-package' >>feeds.conf.default
+# 添加liuran001
+# echo 'src-git liuran001 https://github.com/liuran001/openwrt-packages' >>feeds.conf.default
+# 添加kiddin9
+# echo 'src-git kiddin9 https://github.com/kiddin9/openwrt-packages' >>feeds.conf.default
+# 添加sirpdboy
+#git clone https://github.com/sirpdboy/sirpdboy-package package/sirpdboy-package
+echo 'src-git sirpdboy https://github.com/sirpdboy/sirpdboy-package' >>feeds.conf.default
+echo '=========添加第三方软件源OK!========='
+
+echo '添加lwz322的K3屏幕插件'
+rm -rf package/lean/luci-app-k3screenctrl
+git clone https://github.com/yangxu52/luci-app-k3screenctrl.git package/lean/luci-app-k3screenctrl
+echo '=========Add k3screen plug OK!========='
+
+echo '替换lwz322的K3屏幕驱动插件'
+rm -rf package/lean/k3screenctrl
+git clone https://github.com/yangxu52/k3screenctrl_build.git package/lean/k3screenctrl/
+echo '=========Replace k3screen drive plug OK!========='
+
+echo '移除bcm53xx中的其他机型'
+sed -i '421,453d' target/linux/bcm53xx/image/Makefile
+sed -i '140,412d' target/linux/bcm53xx/image/Makefile
+sed -i 's/$(USB3_PACKAGES) k3screenctrl/luci-app-k3screenctrl/g' target/linux/bcm53xx/image/Makefile
+# sed -n '140,146p' target/linux/bcm53xx/image/Makefile
+echo '=========Remove other devices of bcm53xx OK!========='
+
+#1.'asus_dhd24' 2.'ac88u_20' 3.'69027'
+firmware='69027'
+echo '替换无线驱动'
+wget -nv https://github.com/yangxu52/Phicomm-k3-Wireless-Firmware/raw/master/brcmfmac4366c-pcie.bin.${firmware} -O package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+echo '=========Replace k3 wireless firmware OK!========='
