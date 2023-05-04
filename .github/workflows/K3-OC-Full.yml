@@ -1,5 +1,5 @@
 #
-#Copyright 2021-2023 yangxu52<https://github.com/yangxu52>
+#Copyright 2021 yangxu52<https://github.com/yangxu52>
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -14,12 +14,17 @@
 #limitations under the License.
 #
 
-name: K3-OpenClash-Full
+name: K3 build-OpenClash-Full
 
-# 脚本执行计划
+# 脚本执行时机
 on:
+  repository_dispatch:
   workflow_dispatch:
-
+   #  inputs:
+   #    ssh:
+   #      description: 'SSH connection to Actions'
+   #      required: false
+   #      default: 'false'
   # main分支有提交的时候
   # push:
   #   branches: 
@@ -31,13 +36,14 @@ on:
   release:
     types: [published]
 
+
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
-  FEEDS_CONF: PhicommK3/feeds.conf.default
-  CONFIG_FILE: PhicommK3/Full.config
-  MOD_P1_SH: PhicommK3/part1.sh
-  MOD_P2_SH: PhicommK3/part2.sh
+  FEEDS_CONF: PhicommK3/lede/feeds.conf.default
+  CONFIG_FILE: PhicommK3/lede/Full.config
+  MOD_P1_SH: PhicommK3/lede/part1.sh
+  MOD_P2_SH: PhicommK3/lede/part2.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_COWTRANSFER: false
@@ -59,7 +65,7 @@ jobs:
       run: |
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
@@ -92,6 +98,7 @@ jobs:
 
     - name: 安装feeds中描述内容
       run: cd openwrt && ./scripts/feeds install -a
+
     - name: 加载自定义编译配置文件
       run: |
         [ -e files ] && mv files openwrt/files
@@ -147,7 +154,7 @@ jobs:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
 
-    - name: 上传到cowtransfer
+    - name: 发布到cowtransfer
       id: cowtransfer
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
       run: |
@@ -155,25 +162,36 @@ jobs:
         ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
         echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
         echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
-
-    - name: 上传到WeTransfer
+        
+    - name: 发布到WeTransfer
       id: wetransfer
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
       run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
-        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
+          curl -fsSL git.io/file-transfer | sh
+          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+          echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+          echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
 
     - name: 生成Release标识
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        echo "::set-output name=release_tag::K3-5.4-$(date +"%Y.%m.%d-%H%M")-Full"
+        echo "::set-output name=release_tag::K3oc-full-$(date +"%Y.%m.%d-%H%M")"
         touch release.txt
         [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
         [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
         echo "::set-output name=status::success"
+
+    - name: 发布到Artifact
+      if: github.event.inputs.ssh == 'false'
+      run: |
+        mkdir -p ./artifact/firmware
+        mkdir -p ./artifact/package
+        mkdir -p ./artifact/buildinfo
+        rm -rf $(find ./bin/targets/ -type d -name "packages")
+        cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
+        cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
+        cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
 
     - name: 发布到Release
       uses: softprops/action-gh-release@v1
