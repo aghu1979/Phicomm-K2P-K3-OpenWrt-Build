@@ -15,19 +15,33 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 #
-echo '添加Passwall依赖feeds'
-sed -i '$a src-git passwall https://github.com/xiaorouji/openwrt-passwall' feeds.conf.default
-echo '=========Add passwall feeds source OK!========='
 
 echo '添加Passwall软件源'
-rm -rf package/lean/luci-app-passwall 
-git clone -b luci https://github.com/xiaorouji/openwrt-passwall package/lean/luci-app-passwall 
+rm -rf package/lean/luci-app-passwall
+sed -i '$a src-git passwall https://github.com/xiaorouji/openwrt-passwall' feeds.conf.default
+git clone -b luci https://github.com/xiaorouji/openwrt-passwall package/lean/luci-app-passwall
 echo '=========Add passwall source OK!========='
 
-echo '添加jerrykuku的argon-mod主题'
-rm -rf package/lean/luci-theme-argon  
+echo '添加jerrykuku的argon-mod主题/sirpdboy的kucat主题'
+rm -rf package/lean/luci-theme-argon
 git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/lean/luci-theme-argon
+git clone https://github.com/sirpdboy/luci-theme-kucat package/lean/luci-theme-kucat
 echo '=========Add argon-mod OK!========='
+
+echo '添加第三方软件源'
+rm -rf package/lean/luci-app-netdata
+# rm -rf package/lean/luci-app-nlbwmon
+rm -rf package/lean/luci-app-wrtbwmon
+# 添加kenzok8/small-package
+# echo 'src-git small8 https://github.com/kenzok8/small-package' >>feeds.conf.default
+# 添加liuran001
+# echo 'src-git liuran001 https://github.com/liuran001/openwrt-packages' >>feeds.conf.default
+# 添加kiddin9
+# echo 'src-git kiddin9 https://github.com/kiddin9/openwrt-packages' >>feeds.conf.default
+# 添加sirpdboy
+#git clone https://github.com/sirpdboy/sirpdboy-package package/sirpdboy-package
+echo 'src-git sirpdboy https://github.com/sirpdboy/sirpdboy-package' >>feeds.conf.default
+echo '=========添加第三方软件源OK!========='
 
 echo '添加lwz322的K3屏幕插件'
 rm -rf package/lean/luci-app-k3screenctrl

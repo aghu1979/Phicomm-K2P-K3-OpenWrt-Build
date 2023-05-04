@@ -16,13 +16,13 @@
 #limitations under the License.
 #
 
-# Alter default kernel version
+# 修改内核
 # sed -i 's/KERNEL_PATCHVER:=5.4/KERNEL_PATCHVER:=5.10/g' target/linux/bcm53xx/Makefile
 # cat target/linux/bcm53xx/Makefile |grep KERNEL_PATCHVER
 # echo '=========Alert Kernel OK!========='
 
-# Alter default router IP
-#sed -i 's/192.168.1.1/192.168.50.5/g' package/base-files/files/bin/config_generate
+# 修改默认管理IP
+#sed -i 's/192.168.1.1/192.168.11.1/g' package/base-files/files/bin/config_generate
 
 #修改NTP设置
 #sed -i "s/'0.openwrt.pool.ntp.org'/'ntp1.aliyun.com'/g" package/base-files/files/bin/config_generate
@@ -33,9 +33,13 @@
 #echo 'Alert NTP Settings OK!====================='
 
 echo '修改主机名'
-sed -i "s/hostname='OpenWrt'/hostname='Phicomm-K3'/g" package/base-files/files/bin/config_generate
+sed -i "s/hostname='OpenWrt'/hostname='K3'/g" package/base-files/files/bin/config_generate
 cat package/base-files/files/bin/config_generate |grep hostname=
 echo '=========Alert hostname OK!========='
+
+echo '修改无线功率为23'
+sed -i '3a iwconfig wlan0 txpower 23' package/base-files/files/etc/rc.local
+sed -i '4a iwconfig wlan1 txpower 23' package/base-files/files/etc/rc.local 
 
 echo '移除主页跑分信息显示'
 sed -i 's/ <%=luci.sys.exec("cat \/etc\/bench.log") or ""%>//g' package/lean/autocore/files/arm/index.htm
