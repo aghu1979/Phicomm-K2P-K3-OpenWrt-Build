@@ -53,7 +53,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-20.04
-
+    permissions:
+      contents: write
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -194,8 +195,6 @@ jobs:
 
     - name: 发布到Release
       uses: softprops/action-gh-release@v1
-       permissions:
-        contents: write
       if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
