@@ -194,6 +194,8 @@ jobs:
 
     - name: 发布到Release
       uses: softprops/action-gh-release@v1
+       permissions:
+        contents: write
       if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
