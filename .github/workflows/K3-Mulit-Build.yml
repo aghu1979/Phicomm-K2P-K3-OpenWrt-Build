@@ -10,7 +10,7 @@
 # https://github.com/liwenjie119/Actions-OpenWrt
 # https://github.com/yangxu52/Phicomm-K2P-K3-OpenWrt-Firmware
 
-name: K3-All-Build
+name: K3-Mulit-Build
 
 on:
   repository_dispatch:
