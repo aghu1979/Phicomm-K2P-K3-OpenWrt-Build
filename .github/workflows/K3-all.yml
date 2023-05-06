@@ -6,6 +6,9 @@
 #
 # https://github.com/P3TERX/Actions-OpenWrt
 # Description: Build OpenWrt using GitHub Actions
+# Thanks for below:
+# https://github.com/liwenjie119/Actions-OpenWrt
+# https://github.com/yangxu52/Phicomm-K2P-K3-OpenWrt-Firmware
 
 name: K3-All-Build
 
@@ -123,7 +126,7 @@ jobs:
 
     - name: 加载自定义feeds文件
       run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
+        [ -e $GITHUB_WORKSPACE/$FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $MOD_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$MOD_P1_SH
