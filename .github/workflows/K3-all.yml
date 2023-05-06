@@ -18,8 +18,8 @@ on:
       #  required: false
       #  default: 'false'
       devices:
-        description: '["5.4Full","5.4Lite","5.15Full","5.15Lite"]'
-        default: '["5.4Full","5.4Lite","5.15Full","5.15Lite"]'
+        description: '["5.4Full","5.4Lite","5.10Full","5.10Lite","5.15Full","5.15Lite"]'
+        default: '["5.4Full","5.4Lite","5.10Full","5.10Lite","5.15Full","5.15Lite"]'
       clean:
         description: 'clean ccache'
         default: 'false'
@@ -64,7 +64,7 @@ jobs:
           MATRIXS: ${{ github.event.inputs.devices }}
         run: |
           if [ -z $MATRIXS ]; then
-            MATRIXS='["5.4Full","5.4Lite","5.15Full","5.15Lite"]'
+            MATRIXS='["5.4Full","5.4Lite","5.10Full","5.10Lite","5.15Full","5.15Lite"]'
           fi
           echo "matrix=$MATRIXS" >> $GITHUB_OUTPUT
     outputs:
