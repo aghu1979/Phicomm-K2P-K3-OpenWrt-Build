@@ -133,7 +133,7 @@ jobs:
 
     - name: 安装feeds中描述内容
       run: cd openwrt && ./scripts/feeds install -a
-
+      
     - name: 加载自定义编译配置文件
       run: |
         [ -e files ] && mv files openwrt/files
@@ -143,7 +143,7 @@ jobs:
         $GITHUB_WORKSPACE/$DIY_P2_SH
 #        sed -i 's/192.168.1.1/192.168.11.1/g' package/base-files/files/bin/config_generate
 #        sed -i '/+kmod-dm/ s/$/ +libselinux +libsepol/' feeds/packages/utils/lvm2/Makefile
-        DateTime=`date -R`
+#        DateTime=`date -R`
 #        sed -i "746 a \\\t\t<tr><td width="33%">编译时间<\/td><td>$DateTime<\/td><\/tr>" package/lean/autocore/files/x86/index.htm
 #        sed -i "709 a \\\t\t<tr><td width="33%">编译时间<\/td><td>$DateTime<\/td><\/tr>" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 #        wget https://raw.githubusercontent.com/liwenjie119/packages/dev/net/openssh/patches/0001-fix-root-login.patch -P ./feeds/packages/net/openssh/patches
