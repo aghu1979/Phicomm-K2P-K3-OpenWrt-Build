@@ -24,10 +24,10 @@ echo '修改内核Kernel版本为5.10/5.15，默认为5.4'
 cat target/linux/bcm53xx/Makefile |grep KERNEL_PATCHVER
 
 echo '移除登陆密码'
-sed -i 's/$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.//g' openwrt/package/lean/default-settings/files/zzz-default-settings
+#sed -i 's/$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.//g' openwrt/package/lean/default-settings/files/zzz-default-settings
 
 echo 'TTYD自动登录'
-sed -i 's/\/bin\/login/\/bin\/login -f root/' /etc/config/ttyd && reboot
+#sed -i 's/\/bin\/login/\/bin\/login -f root/' /etc/config/ttyd && reboot
 
 #echo '移除主页跑分信息显示'
 #sed -i 's/ <%=luci.sys.exec("cat \/etc\/bench.log") or ""%>//g' package/lean/autocore/files/arm/index.htm
